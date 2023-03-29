@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "eshop-prices"
+version = "0.1.0"
+description = ""
+authors = ["Hudson Brendon <contato.hudsonbrendon@gmail.com>"]
+readme = "README.md"
+packages = [{include = "eshop_prices"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+bs4 = "^0.0.1"
+lxml = "^4.9.2"
+cchardet = "^2.1.7"
+requests = "^2.28.2"
+pytest = "^7.2.2"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+isort = "^5.12.0"
+pre-commit = "^3.2.1"
+pytest = "^7.2.2"
+requests-mock = "^1.10.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[settings]
+known_third_party = ["pytest", "requests"]
+[tool.black]
+line-length = 79
+[tool.isort]
+profile = "black"
