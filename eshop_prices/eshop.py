@@ -1,4 +1,5 @@
 import urllib
+from typing import List
 
 import bs4
 import cchardet
@@ -7,32 +8,29 @@ import requests
 
 
 class EshopPrices:
-    def __init__(self, currency=""):
-        self.base_url = "https://eshop-prices.com/"
+    def __init__(self, currency: str = "") -> None:
+        self.__BASE_URL = "https://eshop-prices.com/"
+        self.__currency = currency
 
-        self.currency = currency
+    @property
+    def base_url(self) -> str:
+        return self.__BASE_URL
 
-    def __parse_games_list_item(
-        self, games_list_item: bs4.element.Tag
-    ) -> dict:
+    @property
+    def currency(self) -> str:
+        return self.__currency
+
+    @property
+    def headers(self) -> str:
+        return {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0"}
+
+    def __parse_games_list_item(self, games_list_item: bs4.element.Tag) -> dict:
         game_title = games_list_item.find_all("h5")[0].string
         game_url = games_list_item["href"]
-        for i, s in enumerate(
-            games_list_item.find_all("span", {"class": "price-tag"})[0].strings
-        ):
-            print(i, s)
         try:
-            game_price = list(
-                games_list_item.find_all("span", {"class": "price-tag"})[
-                    0
-                ].strings
-            )[2].strip()
+            game_price = list(games_list_item.find_all("span", {"class": "price-tag"})[0].strings)[2].strip()
         except IndexError:
-            game_price = list(
-                games_list_item.find_all("span", {"class": "price-tag"})[
-                    0
-                ].strings
-            )[0].strip()
+            game_price = list(games_list_item.find_all("span", {"class": "price-tag"})[0].strings)[0].strip()
 
         return {
             "game_title": game_title,
@@ -63,7 +61,7 @@ class EshopPrices:
                 "discount": False,
             }
 
-    def __parse_prices_table_row(self, row):
+    def __parse_prices_table_row(self, row) -> dict:
         columns = row.find_all("td")
 
         country = self.__parse_country_column(columns[1])
@@ -75,17 +73,11 @@ class EshopPrices:
 
         return {"country": country, "meta": meta, "price": price}
 
-    def get_prices_from_url(self, game_url: str) -> [{str: str}]:
-        request_url = (
-            self.base_url + game_url
-        )  # + f'?currency={self.currency}'
-        print("Making request to " + request_url)
-
+    def get_prices_from_url(self, game_url: str) -> List[dict]:
+        request_url = f"{self.base_url}{game_url}?currency={self.currency}"
         response = requests.get(
             request_url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0"
-            },
+            headers=self.headers,
         )
 
         if response.status_code == 200:
@@ -95,28 +87,22 @@ class EshopPrices:
 
             prices = []
             for row in prices_table.tbody.find_all("tr"):
-                # columns = row.find_all('td')
                 try:
                     prices.append(self.__parse_prices_table_row(row))
                 except IndexError as e:
-                    print(e, row)
+                    pass
 
             return prices
-        else:
-            return f"Error getting prices from game_url! (Status = {response.status_code})"
+        return f"Error getting prices from game_url! (Status = {response.status_code})"
 
-    def search(self, query: str) -> {str: str}:
+    def search(self, query: str) -> List[dict]:
         encoded_query = urllib.parse.quote(query, safe="")
 
-        request_url = (
-            self.base_url + f"games?q={encoded_query}&currency={self.currency}"
-        )
+        request_url = self.base_url + f"games?q={encoded_query}&currency={self.currency}"
 
         response = requests.get(
             request_url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0"
-            },
+            headers=self.headers,
         )
 
         if response.status_code == 200:
@@ -134,13 +120,9 @@ class EshopPrices:
                 }
 
             return results
-        else:
-            return (
-                f"Error performing search! (Status = {response.status_code})"
-            )
-        pass
+        return f"Error performing search! (Status = {response.status_code})"
 
-    def get_prices(self, game: str) -> [{str: str}]:
+    def get_prices(self, game: str) -> List[dict]:
         search_results = self.search(game)
 
         if len(search_results) == 0:
@@ -151,26 +133,16 @@ class EshopPrices:
             print("More than one game found from that query:")
             for i, game_title in enumerate(search_results.keys()):
                 print(f"{i} - {game_title}")
+            game_to_get = input("What game do you want the prices for (use the number) ? ")
 
-            game_to_get = input(
-                "What game do you want the prices for (use the number) ? "
-            )
+            return self.get_prices_from_url(list(search_results.values())[int(game_to_get)]["uri"])
 
-            return self.get_prices_from_url(
-                list(search_results.values())[int(game_to_get)]["uri"]
-            )
-
-    def get_top_discounts(self) -> [{str: str}]:
-        request_url = (
-            self.base_url
-            + f"games/on-sale?direction=desc&sort_by=discount&currency={self.currency}"
-        )
+    def get_top_discounts(self) -> List[dict]:
+        request_url = self.base_url + f"games/on-sale?direction=desc&sort_by=discount&currency={self.currency}"
 
         response = requests.get(
             request_url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0"
-            },
+            headers=self.headers,
         )
 
         soup = bs4.BeautifulSoup(response.text, "lxml")
@@ -188,18 +160,14 @@ class EshopPrices:
 
         return results
 
-    def get_available_currencies(self) -> {str: str}:
+    def get_available_currencies(self) -> dict:
         response = requests.get(
             self.base_url,
-            headers={
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0"
-            },
+            headers=self.headers,
         )
 
         soup = bs4.BeautifulSoup(response.text, "lxml")
-        currency_select = soup.find_all("select", {"name": "language-select"})[
-            0
-        ]
+        currency_select = soup.find_all("select", {"name": "language-select"})[0]
         options = currency_select.find_all("option")
 
         result = {}
