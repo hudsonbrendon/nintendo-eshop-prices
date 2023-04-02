@@ -18,7 +18,7 @@ A wrapper python for [eshop-prices.com](https://eshop-prices.com/)
 $ pip install eshop-prices
 ```
 
-# contribute
+# Contribute
 
 Clone the repository project:
 
