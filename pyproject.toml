@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "eshop_prices"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.7"
 lxml = "^4.9.2"
 cchardet = "^2.1.7"
 requests = "^2.28.2"
