@@ -8,11 +8,11 @@ packages = [{include = "eshop_prices"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-bs4 = "^0.0.1"
 lxml = "^4.9.2"
 cchardet = "^2.1.7"
 requests = "^2.28.2"
 pytest = "^7.2.2"
+beautifulsoup4 = "^4.12.0"
 
 
 [tool.poetry.group.dev.dependencies]

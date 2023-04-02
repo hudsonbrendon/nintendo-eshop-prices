@@ -171,6 +171,7 @@ class EshopPrices:
         options = currency_select.find_all("option")
 
         result = {}
+
         for option in options:
             result[option["value"]] = option.string
 
