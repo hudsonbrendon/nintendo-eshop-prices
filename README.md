@@ -1,0 +1,3 @@
+# Nintendo Eshop Prices
+
+# Install
