@@ -89,7 +89,7 @@ class EshopPrices:
             for row in prices_table.tbody.find_all("tr"):
                 try:
                     prices.append(self.__parse_prices_table_row(row))
-                except IndexError as e:
+                except IndexError:
                     pass
 
             return prices
