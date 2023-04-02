@@ -1,5 +1,9 @@
 # Nintendo Eshop Prices
 
+A wrapper python for [eshop-prices.com](https://eshop-prices.com/)
+
+![image](https://user-images.githubusercontent.com/5201888/229378038-9fc6fc8c-bb52-4b94-82d1-620e0cfc333b.png)
+
 # Available resources
 
 - [x] Search
