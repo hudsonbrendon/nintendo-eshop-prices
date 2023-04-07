@@ -22,15 +22,27 @@ class EshopPrices:
 
     @property
     def headers(self) -> str:
-        return {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0"}
+        return {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:85.0) Gecko/20100101 Firefox/85.0"
+        }
 
-    def __parse_games_list_item(self, games_list_item: bs4.element.Tag) -> dict:
+    def __parse_games_list_item(
+        self, games_list_item: bs4.element.Tag
+    ) -> dict:
         game_title = games_list_item.find_all("h5")[0].string
         game_url = games_list_item["href"]
         try:
-            game_price = list(games_list_item.find_all("span", {"class": "price-tag"})[0].strings)[2].strip()
+            game_price = list(
+                games_list_item.find_all("span", {"class": "price-tag"})[
+                    0
+                ].strings
+            )[2].strip()
         except IndexError:
-            game_price = list(games_list_item.find_all("span", {"class": "price-tag"})[0].strings)[0].strip()
+            game_price = list(
+                games_list_item.find_all("span", {"class": "price-tag"})[
+                    0
+                ].strings
+            )[0].strip()
 
         return {
             "game_title": game_title,
@@ -98,7 +110,9 @@ class EshopPrices:
     def search(self, query: str) -> List[dict]:
         encoded_query = urllib.parse.quote(query, safe="")
 
-        request_url = self.base_url + f"games?q={encoded_query}&currency={self.currency}"
+        request_url = (
+            self.base_url + f"games?q={encoded_query}&currency={self.currency}"
+        )
 
         response = requests.get(
             request_url,
@@ -133,12 +147,19 @@ class EshopPrices:
             print("More than one game found from that query:")
             for i, game_title in enumerate(search_results.keys()):
                 print(f"{i} - {game_title}")
-            game_to_get = input("What game do you want the prices for (use the number) ? ")
+            game_to_get = input(
+                "What game do you want the prices for (use the number) ? "
+            )
 
-            return self.get_prices_from_url(list(search_results.values())[int(game_to_get)]["uri"])
+            return self.get_prices_from_url(
+                list(search_results.values())[int(game_to_get)]["uri"]
+            )
 
     def get_top_discounts(self) -> List[dict]:
-        request_url = self.base_url + f"games/on-sale?direction=desc&sort_by=discount&currency={self.currency}"
+        request_url = (
+            self.base_url
+            + f"games/on-sale?direction=desc&sort_by=discount&currency={self.currency}"
+        )
 
         response = requests.get(
             request_url,
@@ -167,7 +188,9 @@ class EshopPrices:
         )
 
         soup = bs4.BeautifulSoup(response.text, "lxml")
-        currency_select = soup.find_all("select", {"name": "language-select"})[0]
+        currency_select = soup.find_all("select", {"name": "language-select"})[
+            0
+        ]
         options = currency_select.find_all("option")
 
         result = {}
