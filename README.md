@@ -2,8 +2,6 @@
 
 A wrapper python for [eshop-prices.com](https://eshop-prices.com/)
 
-![image](https://user-images.githubusercontent.com/5201888/229378038-9fc6fc8c-bb52-4b94-82d1-620e0cfc333b.png)
-
 # Available resources
 
 - [x] Search
@@ -93,7 +91,7 @@ eshop.get_available_currencies()
 
 # Dependencies
 
-- [Python >=3.8](https://www.python.org/downloads/release/python-388/)
+- [Python >=3.10](https://www.python.org/downloads/release/python-3100/)
 
 # License
 
