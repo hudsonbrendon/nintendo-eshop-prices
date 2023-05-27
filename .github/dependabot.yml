@@ -21,7 +21,7 @@ updates:
     # Certifique-se de substituir `<diretório do projeto>` pelo caminho real
     directory: "<diretório do projeto>"
     target-branches:
-      - "main"
+      - "master"
     # Defina quais tipos de atualizações você deseja permitir
     # Aqui, permitimos atualizações para patch releases e minor releases
     # Consulte a documentação para obter mais informações sobre as opções de atualização.
